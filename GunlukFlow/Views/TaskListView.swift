@@ -99,12 +99,14 @@ struct TaskListView: View {
                             }
                         }
                         .frame(width: 350, height: 250)
-                        
-                        .background(Color.blue.opacity(0.2))
+                        .cornerRadius(10)
+                        .background(Color.blue.opacity(0.1))
                         .padding(10)
                         
                         //görevleri listele
                         MotivationBannerView()
+                        
+                        
                         
                         let filteredTasks = selectedFilterCategory == "Tüm Kategoriler" ?
                             viewModel.tasks :
@@ -126,6 +128,7 @@ struct TaskListView: View {
                         List {
                             ForEach(filteredTasks) { task in
                                 TaskRowView(task: task, viewModel: viewModel)
+                                    .listRowBackground(Color.blue.opacity(0.1))
                                    
                             }
                             .onDelete { IndexSet in
@@ -136,8 +139,13 @@ struct TaskListView: View {
                             }
                         }
                         .frame(width: 400,height: 300)
+                        
                         .scrollContentBackground(.hidden)
                         .cornerRadius(10)
+                        
+                        BannerAdView(adUnitID: "ca-app-pub-3940256099942544/2934735716")
+                            .frame(width: 320, height: 50)
+                            .padding(.top)
                         
                     }
                     .navigationTitle("GünlükFlow")
