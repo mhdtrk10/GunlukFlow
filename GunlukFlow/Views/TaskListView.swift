@@ -26,6 +26,7 @@ struct TaskListView: View {
     // haftalık istatistik verilere ulaşmak için
     @State private var ShowStats = false
     
+    @State private var ShowSounds = false
    
     //viewModel'i init ile bağla
     init() {
@@ -58,26 +59,53 @@ struct TaskListView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .bottomTrailing)
                         VStack {
+                            
+                            
                             TextField("Yeni görev..", text: $newTaskTitle)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(width: 300)
+                                .frame(width: 340)
+                                .padding()
                                 
                             
                             HStack {
-                                Text("Kategori:")
-                                    .frame(maxWidth:90,alignment: .leading)
                                 
-                                Picker("Kategori",selection: $selectedCategory) {
-                                    ForEach(categories, id: \.self) { category in
-                                        Text(category)
+                                HStack {
+                                    Text("Kategori:")
+                                        .frame(width: 70,alignment: .leading)
+                                    
+                                    
+                                    
+                                    Picker("Kategori",selection: $selectedCategory) {
+                                        ForEach(categories, id: \.self) { category in
+                                            Text(category)
+                                        }
+                                    }
+                                    .pickerStyle(MenuPickerStyle()) // açılır menü
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(10)
+                                    
+                                    Spacer()
+                                }
+                                .frame(width: 200)
+                                
+                                
+                                HStack {
+                                    Button(action: {
+                                        ShowSounds.toggle()
+                                    }) {
+                                        Text("Bildirim Sesi")
+                                            .frame(width: 120,height: 35)
+                                            .background(Color.blue)
+                                            .foregroundColor(Color.white)
+                                            .cornerRadius(10)
+                                            
                                     }
                                 }
-                                .pickerStyle(MenuPickerStyle()) // açılır menü
-                                .background(Color(.systemGray6))
-                                .cornerRadius(10)
-                                Spacer()
+                                .frame(width: 120, alignment: .bottomTrailing)
+                                
                             }
-                            .frame(width: 250)
+                            .frame(width: 350)
+                            
                             HStack {
                                 DatePicker("Tarih:",selection: $newTaskDate,displayedComponents: [.date,.hourAndMinute])
                                     .frame(maxWidth:.infinity,alignment: .leading)
@@ -98,7 +126,7 @@ struct TaskListView: View {
                                     .cornerRadius(10)
                             }
                         }
-                        .frame(width: 350, height: 250)
+                        .frame(width: 350, height: 300)
                         .cornerRadius(10)
                         .background(Color.blue.opacity(0.1))
                         .padding(10)
@@ -123,6 +151,7 @@ struct TaskListView: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                             .pickerStyle(MenuPickerStyle())
+
                         }
                         .frame(width: 350)
                         List {
@@ -143,6 +172,7 @@ struct TaskListView: View {
                         .scrollContentBackground(.hidden)
                         .cornerRadius(10)
                         
+                        //reklamı gösterdiğimiz yer
                         BannerAdView(adUnitID: "ca-app-pub-3940256099942544/2934735716")
                             .frame(width: 320, height: 50)
                             .padding(.top)
@@ -151,6 +181,9 @@ struct TaskListView: View {
                     .navigationTitle("GünlükFlow")
                     .sheet(isPresented: $ShowStats) {
                         StaticsView(viewModel: viewModel)
+                    }
+                    .sheet(isPresented: $ShowSounds) {
+                        SoundPickerView()
                     }
                 }
             }
