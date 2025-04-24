@@ -18,6 +18,9 @@ struct TaskListView: View {
     @State private var newTaskDate: Date = Date()
     @State private var selectedCategory: String = "İş"
     
+    // kullanıcıya kaydetme bildirimi için
+    @State private var showSuccessAlert = false
+    
     let categories = ["İş","Kişisel","Sağlık","Eğitim","Alışveriş","Eğlence"]
     
     @State private var selectedFilterCategory: String = "Tüm Kategoriler"
@@ -42,7 +45,7 @@ struct TaskListView: View {
         NavigationView {
             ZStack {
                 Color.blue.opacity(0.15)
-                    .ignoresSafeArea(edges: .all)
+                    .ignoresSafeArea()
                 
                 ScrollView {
                     VStack {
@@ -116,7 +119,20 @@ struct TaskListView: View {
                             Button(action: {
                                 if !newTaskTitle.isEmpty {
                                     viewModel.addTask(title: newTaskTitle, date: newTaskDate, category: selectedCategory)
+                                    
+                                    
+                                    // bildirimi zamanlama
+                                    
+                                    NotificationManager.scheduleNotification(
+                                        title: "Görevin Zamanı Geldi!",
+                                        body: newTaskTitle,
+                                        date: newTaskDate
+                                    )
+                                    // formu sıfırlama
                                     newTaskTitle = ""
+                                    
+                                    // alerti tetikleme
+                                    showSuccessAlert = true
                                 }
                             }) {
                                 Text("Ekle")
@@ -130,7 +146,13 @@ struct TaskListView: View {
                         .cornerRadius(10)
                         .background(Color.blue.opacity(0.1))
                         .padding(10)
-                        
+                        .alert("Başarılı!", isPresented: $showSuccessAlert) {
+                            Button("Tamam", role: .cancel) {
+                                
+                            }
+                        } message: {
+                            Text("Yeni görev eklendi.")
+                        }
                         //görevleri listele
                         MotivationBannerView()
                         
@@ -168,7 +190,6 @@ struct TaskListView: View {
                             }
                         }
                         .frame(width: 400,height: 300)
-                        
                         .scrollContentBackground(.hidden)
                         .cornerRadius(10)
                         
@@ -185,6 +206,7 @@ struct TaskListView: View {
                     .sheet(isPresented: $ShowSounds) {
                         SoundPickerView()
                     }
+                    
                 }
             }
         }

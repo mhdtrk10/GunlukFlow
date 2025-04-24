@@ -36,37 +36,65 @@ struct SoundPickerView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(filteredSounds) { sound in
-                    HStack {
-                        Text(sound.name)
-                        Spacer()
-                        if sound.fileName == self.selectedSound {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
+            ZStack {
+                
+                Color.blue.opacity(0.15)
+                    .ignoresSafeArea()
+                
+                List {
+                    ForEach(filteredSounds) { sound in
+                        HStack {
+                            Text(sound.name)
+                                
+                            Spacer()
+                            if sound.fileName == self.selectedSound {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        .listRowBackground(Color.blue.opacity(0.1))
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            // ses önizleme
+                            playSound(name: sound.fileName)
+                            
+                            // seçilen sesi kaydetmen
+                            selectedSound = sound.fileName
+                            UserDefaults.standard.set(sound.fileName, forKey: "selectedSound")
+                            
+                            // ekranı kapama
+                            //dismiss()
                         }
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        // ses önizleme
-                        playSound(name: sound.fileName)
-                        
-                        // seçilen sesi kaydetmen
-                        selectedSound = sound.fileName
-                        UserDefaults.standard.set(sound.fileName, forKey: "selectedSound")
-                        
-                        // ekranı kapama
-                        //dismiss()
+                }
+                .scrollContentBackground(.hidden)
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Ses ara..")
+                .navigationTitle("Bildirim Sesi Seç")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Text("Kapat")
+                                .frame(width: 90,height: 30)
+                                .background(Color.blue)
+                                .foregroundColor(Color.white)
+                                .cornerRadius(10)
+                        }
                     }
                 }
             }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Ses ara..")
-            .navigationTitle("Bildirim Sesi Seç")
-            .navigationBarTitleDisplayMode(.inline)
         }
+        
     }
     
     func playSound(name fileName: String) {
+        
+        if let player = audioPlayer, player.isPlaying {
+            player.stop()
+        }
+        
         if let url = Bundle.main.url(forResource: fileName.replacingOccurrences(of: ".caf", with: ""), withExtension: "caf") {
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: url)
