@@ -21,26 +21,54 @@ struct TaskListView: View {
     // kullanıcıya kaydetme bildirimi için
     @State private var showSuccessAlert = false
     
-    let categories = ["İş","Kişisel","Sağlık","Eğitim","Alışveriş","Eğlence"]
+    @State private var  categories: [String] = ["İş","Kişisel","Sağlık","Eğitim","Alışveriş","Eğlence"]
+    
+    @State private var filteredCategories: [String] = []
     
     @State private var selectedFilterCategory: String = "Tüm Kategoriler"
-    let filterCagetories = ["Tüm Kategoriler"]+["İş","Kişisel","Sağlık","Eğitim","Alışveriş","Eğlence"]
+    
     
     // haftalık istatistik verilere ulaşmak için
     @State private var ShowStats = false
     
     @State private var ShowSounds = false
    
+    private var filteredTasks: [TaskModel] {
+        let preliminaryTasks: [TaskModel]
+        
+        if selectedFilterCategory == "Tüm Kategoriler" {
+            preliminaryTasks = viewModel.tasks
+        } else if selectedFilterCategory == "Sadece Favoriler" {
+            preliminaryTasks = viewModel.tasks.filter { $0.isFavorite }
+        } else {
+            preliminaryTasks = viewModel.tasks.filter { $0.category == selectedFilterCategory }
+        }
+        
+        return preliminaryTasks.sorted { first, second in
+            if first.isFavorite && !second.isFavorite {
+                return true
+            } else if !first.isFavorite && second.isFavorite {
+                return false
+            } else {
+                return first.date < second.date
+            }
+        }
+    }
+
+    
     //viewModel'i init ile bağla
     init() {
         //Core Data contexxt App içinde environment ile verilecek
         let context = PersistenceController.shared.container.viewContext
         _viewModel = StateObject(wrappedValue: TaskViewModel(context: context))
+        
+        _filteredCategories = State(initialValue: ["Tüm Kategoriler","Sadece Favoriler","İş","Kişisel","Sağlık","Eğitim","Alışveriş","Eğlence"])
     }
     
     var body: some View {
         
-        
+       
+
         
         NavigationView {
             ZStack {
@@ -146,28 +174,19 @@ struct TaskListView: View {
                         .cornerRadius(10)
                         .background(Color.blue.opacity(0.1))
                         .padding(10)
-                        .alert("Başarılı!", isPresented: $showSuccessAlert) {
-                            Button("Tamam", role: .cancel) {
-                                
-                            }
-                        } message: {
-                            Text("Yeni görev eklendi.")
-                        }
+                        
                         //görevleri listele
                         MotivationBannerView()
                         
                         
                         
-                        let filteredTasks = selectedFilterCategory == "Tüm Kategoriler" ?
-                            viewModel.tasks :
-                            viewModel.tasks.filter { $0.category == selectedFilterCategory }
                         
                         HStack {
                             Text("Kategoriye göre filtrele:")
                                 .frame(width: 180)
                                 
                             Picker("Kategori", selection: $selectedFilterCategory) {
-                                ForEach(filterCagetories, id: \.self) { category in
+                                ForEach(filteredCategories, id: \.self) { category in
                                     Text(category)
                                 }
                             }
@@ -206,7 +225,13 @@ struct TaskListView: View {
                     .sheet(isPresented: $ShowSounds) {
                         SoundPickerView()
                     }
-                    
+                    .alert("Başarılı!", isPresented: $showSuccessAlert) {
+                        Button("Tamam", role: .cancel) {
+                            
+                        }
+                    } message: {
+                        Text("Yeni görev eklendi.")
+                    }
                 }
             }
         }

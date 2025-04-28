@@ -16,4 +16,5 @@ struct TaskModel: Identifiable {
     var isCompleted: Bool // tamamlandı mı?
     var date: Date // tarih
     var category: String // Yeni kategori
+    var isFavorite: Bool // favorilere ekleme için
 }

@@ -22,11 +22,13 @@ struct TaskRowView: View {
                 .foregroundColor(task.isCompleted ? .green : .gray)
             
             VStack(alignment: .leading) {
-                //başlık (üstü çizgili veya normal)
+                //başlık (üstü çizgili veya normal) ve kategori
                 Text(task.title)
                     .strikethrough(task.isCompleted, color: .gray)
                     .font(.headline)
+                
                 HStack(spacing: 6) {
+                    
                     Text(task.category)
                         .font(.caption)
                         .padding(.horizontal,8)
@@ -40,7 +42,15 @@ struct TaskRowView: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
+                Spacer()
+                
+                Image(systemName: task.isFavorite ? "star.fill" : "star")
+                    .foregroundColor(task.isFavorite ? .yellow : .gray)
+                    .onTapGesture {
+                        viewModel.toggleFavorite(task)
+                    }
             }
+            .padding(.vertical,6)
         }
         
         .padding(.vertical,6)

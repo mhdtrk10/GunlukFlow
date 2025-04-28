@@ -37,13 +37,46 @@ class TaskViewModel: ObservableObject {
                     title: entity.title ?? "",
                     isCompleted: entity.isCompleted,
                     date: entity.date ?? Date(),
-                    category: entity.category ?? "Genel"
+                    category: entity.category ?? "Genel",
+                    isFavorite: entity.isFavorite
             )
             }
         } catch {
             print("Görevler çekilemedi: \(error.localizedDescription)")
         }
     }
+    // görevin favori durumunu değiştirme
+    
+    func toggleFavorite(_ task: TaskModel) {
+        /*
+        let request: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
+        
+        do {
+            let result = try context.fetch(request)
+            
+            if let entity = result.first {
+                
+                entity.isFavorite.toggle() // favori durumunu değiştirir.
+                
+                try context.save()
+                fetchTasks()
+                
+            }
+        } catch {
+            print("Görev favori durumu güncellenemedi: \(error.localizedDescription)")
+        }
+         */
+        if let entity = try? context.existingObject(with: task.id) as? TaskEntity {
+            entity.isFavorite.toggle()
+            saveChanges()
+            fetchTasks()
+        }
+        
+    }
+    
+    
+    
     // yeni görev ekler
     
     func addTask(title: String, date: Date, category: String) {
@@ -82,6 +115,7 @@ class TaskViewModel: ObservableObject {
             print("Değişiklikler kaydedilemedi. \(error.localizedDescription)")
         }
     }
+    
     // haftalık görev tamamlama istatistiğini veren fonksiyon
     func getWeeklyCompletionData() -> [(day: String, count: Int)] {
         // takvim ve tarih ayarları
