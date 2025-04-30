@@ -17,4 +17,5 @@ struct TaskModel: Identifiable {
     var date: Date // tarih
     var category: String // Yeni kategori
     var isFavorite: Bool // favorilere ekleme için
+    var reminderOffset: TimeInterval // hatırlatma için
 }

@@ -38,7 +38,8 @@ class TaskViewModel: ObservableObject {
                     isCompleted: entity.isCompleted,
                     date: entity.date ?? Date(),
                     category: entity.category ?? "Genel",
-                    isFavorite: entity.isFavorite
+                    isFavorite: entity.isFavorite,
+                    reminderOffset: entity.reminderOffset
             )
             }
         } catch {
@@ -48,25 +49,7 @@ class TaskViewModel: ObservableObject {
     // görevin favori durumunu değiştirme
     
     func toggleFavorite(_ task: TaskModel) {
-        /*
-        let request: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
         
-        do {
-            let result = try context.fetch(request)
-            
-            if let entity = result.first {
-                
-                entity.isFavorite.toggle() // favori durumunu değiştirir.
-                
-                try context.save()
-                fetchTasks()
-                
-            }
-        } catch {
-            print("Görev favori durumu güncellenemedi: \(error.localizedDescription)")
-        }
-         */
         if let entity = try? context.existingObject(with: task.id) as? TaskEntity {
             entity.isFavorite.toggle()
             saveChanges()
@@ -79,12 +62,13 @@ class TaskViewModel: ObservableObject {
     
     // yeni görev ekler
     
-    func addTask(title: String, date: Date, category: String) {
+    func addTask(title: String, date: Date, category: String, reminderOffset: TimeInterval) {
         let newTask = TaskEntity(context: context)
         newTask.title = title
         newTask.isCompleted = false
         newTask.date = date
         newTask.category = category
+        newTask.reminderOffset = reminderOffset
         
         saveChanges()
         fetchTasks()

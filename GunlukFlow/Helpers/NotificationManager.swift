@@ -12,24 +12,26 @@ import UserNotifications
 struct NotificationManager {
     // belirtilen tarihte seçilen ses ile bildirim zamanlar
     
-    static func scheduleNotification(title: String, body: String, date: Date) {
+    static func scheduleNotification(title: String, body: String, date: Date, reminderOffSet: TimeInterval) {
         
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         
         // kullanıcının seçtiği sesi UserDefaults'tan alma
-        let selectedSoundFile = UserDefaults.standard.string(forKey: "selectedSound") ?? "kus.caf"
+        let selectedSoundFile = UserDefaults.standard.string(forKey: "selectedSound") ?? "kussesi.caf"
         
         // bildirime özel ses atama
         content.sound = UNNotificationSound(named: UNNotificationSoundName(selectedSoundFile))
         
         // tarih bileşenlerini çıkar
-        let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        let triggerDate = date.addingTimeInterval(reminderOffSet)
         
+        // tarih bileşenlerine çevirme
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: triggerDate)
         
         // tek seferlik zamanlayıcı tetikleyici
-        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         
         
         // benzeersiz kimlik oluşturma

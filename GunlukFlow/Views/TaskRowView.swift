@@ -37,6 +37,9 @@ struct TaskRowView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                     
+                    Text(reminderOffSetDescription(task.reminderOffset))
+                        .font(.caption2)
+                        .foregroundColor(Color.gray)
                     
                     Text(formatDate(task.date))
                         .font(.caption)
@@ -79,6 +82,19 @@ struct TaskRowView: View {
         formatter.dateStyle = .medium
         return formatter.string(from: date)
     }
+    
+    func reminderOffSetDescription(_ offset: TimeInterval) -> String {
+        switch offset {
+        case 0: return "Zamanında hatırlatır"
+        case -300: return "5 dakika önce hatırlatır"
+        case -900: return "15 dk önce hatırlatır"
+        case -3600: return "1 saat önce hatırlatır"
+        default:
+            let dakika = Int(abs(offset) / 60)
+            return "\(dakika) dakika önce hatırlatır"
+        }
+    }
+    
 }
 
 

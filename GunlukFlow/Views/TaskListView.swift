@@ -27,6 +27,18 @@ struct TaskListView: View {
     
     @State private var selectedFilterCategory: String = "Tüm Kategoriler"
     
+    // varsayılan görev saati
+    @State private var selectedReminderOffSet: TimeInterval = 0
+    
+    let reminderOptions: [(label: String, offset: TimeInterval) ] = [
+        ("Görev saatinde", 0),
+        ("5 dakika önce", -300),
+        ("15 dakika önce ", -900),
+        ("1 saat önce ", -3600)
+        
+    ]
+        
+
     
     // haftalık istatistik verilere ulaşmak için
     @State private var ShowStats = false
@@ -94,7 +106,7 @@ struct TaskListView: View {
                             
                             TextField("Yeni görev..", text: $newTaskTitle)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(width: 340)
+                                .frame(width: 330)
                                 .padding()
                                 
                             
@@ -103,10 +115,11 @@ struct TaskListView: View {
                                 HStack {
                                     Text("Kategori:")
                                         .frame(width: 70,alignment: .leading)
+                                        
                                     
                                     
                                     
-                                    Picker("Kategori",selection: $selectedCategory) {
+                                    Picker("",selection: $selectedCategory) {
                                         ForEach(categories, id: \.self) { category in
                                             Text(category)
                                         }
@@ -117,8 +130,7 @@ struct TaskListView: View {
                                     
                                     Spacer()
                                 }
-                                .frame(width: 200)
-                                
+                                .frame(width: 200, height: 50)
                                 
                                 HStack {
                                     Button(action: {
@@ -132,21 +144,44 @@ struct TaskListView: View {
                                             
                                     }
                                 }
-                                .frame(width: 120, alignment: .bottomTrailing)
+                                .frame(width: 110, alignment: .bottomTrailing)
+                                
+                            }
+                            //.background(Color.blue.opacity(0.25))
+                            .frame(width: 350)
+                            
+                            HStack {
+                                HStack {
+                                    DatePicker("Tarih:",selection: $newTaskDate,displayedComponents: [.date,.hourAndMinute])
+                                        .frame(maxWidth:.infinity,alignment: .leading)
+                                    
+                                }
+                                .frame(width:250)
+                                
+                                Spacer()
+                            }
+                            .padding()
+                            .frame(width: 350)
+                            
+                            
+                            HStack {
+                                Text("Hatırlatma Zamanı :")
+                                
+                                Picker("",selection: $selectedReminderOffSet) {
+                                    ForEach(reminderOptions, id: \.offset) { option in
+                                        Text(option.label).tag(option.offset)
+                                    }
+                                }
+                                .pickerStyle(MenuPickerStyle())
                                 
                             }
                             .frame(width: 350)
                             
-                            HStack {
-                                DatePicker("Tarih:",selection: $newTaskDate,displayedComponents: [.date,.hourAndMinute])
-                                    .frame(maxWidth:.infinity,alignment: .leading)
-                                    
-                            }
-                            .frame(width:250)
-                                
+                            
+                            
                             Button(action: {
                                 if !newTaskTitle.isEmpty {
-                                    viewModel.addTask(title: newTaskTitle, date: newTaskDate, category: selectedCategory)
+                                    viewModel.addTask(title: newTaskTitle, date: newTaskDate, category: selectedCategory, reminderOffset: selectedReminderOffSet)
                                     
                                     
                                     // bildirimi zamanlama
@@ -154,7 +189,8 @@ struct TaskListView: View {
                                     NotificationManager.scheduleNotification(
                                         title: "Görevin Zamanı Geldi!",
                                         body: newTaskTitle,
-                                        date: newTaskDate
+                                        date: newTaskDate,
+                                        reminderOffSet: selectedReminderOffSet
                                     )
                                     // formu sıfırlama
                                     newTaskTitle = ""
@@ -168,9 +204,11 @@ struct TaskListView: View {
                                     .background(Color.blue)
                                     .foregroundColor(Color.white)
                                     .cornerRadius(10)
+                                    
                             }
+                            
                         }
-                        .frame(width: 350, height: 300)
+                        .frame(width: 350, height: 330)
                         .cornerRadius(10)
                         .background(Color.blue.opacity(0.1))
                         .padding(10)
