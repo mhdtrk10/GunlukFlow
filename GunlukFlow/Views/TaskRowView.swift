@@ -13,29 +13,35 @@ struct TaskRowView: View {
     let viewModel: TaskViewModel
     
     var body: some View {
-        HStack {
-            //tamamlandı mı ikon
-            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                .onTapGesture {
-                    viewModel.toggleTask(task)
-                }
-                .foregroundColor(task.isCompleted ? .green : .gray)
+        HStack(alignment: .top, spacing: 10) {
             
-            VStack(alignment: .leading) {
+            Rectangle()
+                .fill(colorForCategory(task.category))
+                .frame(width: 5)
+                .cornerRadius(2)
+            
+            
+            
+            VStack(alignment: .leading,spacing: 6) {
+                
                 //başlık (üstü çizgili veya normal) ve kategori
+                
+                Text(task.category)
+                    .font(.caption)
+                    .padding(.horizontal,8)
+                    .padding(.vertical,4)
+                    .background(categoryColor(task.category))
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                
                 Text(task.title)
+                    .foregroundColor(task.isCompleted ? .gray : .primary)
                     .strikethrough(task.isCompleted, color: .gray)
                     .font(.headline)
                 
-                HStack(spacing: 6) {
+                HStack {
                     
-                    Text(task.category)
-                        .font(.caption)
-                        .padding(.horizontal,8)
-                        .padding(.vertical,4)
-                        .background(categoryColor(task.category))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                   
                     
                     Text(reminderOffSetDescription(task.reminderOffset))
                         .font(.caption2)
@@ -45,17 +51,28 @@ struct TaskRowView: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-                Spacer()
                 
-                Image(systemName: task.isFavorite ? "star.fill" : "star")
-                    .foregroundColor(task.isFavorite ? .yellow : .gray)
-                    .onTapGesture {
-                        viewModel.toggleFavorite(task)
-                    }
+                // tamamlandı butonu
+                
             }
-            .padding(.vertical,6)
+            .padding(.vertical,4)
+            .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+            .cornerRadius(10)
+            
+            Spacer()
+            
+            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(task.isCompleted ? .green : .gray)
+                .onTapGesture {
+                    viewModel.toggleTask(task)
+                }
+            // favori butonu
+            Image(systemName: task.isFavorite ? "star.fill" : "star")
+                .foregroundColor(task.isFavorite ? .yellow : .gray)
+                .onTapGesture {
+                    viewModel.toggleFavorite(task)
+                }
         }
-        
         .padding(.vertical,6)
     }
     func categoryColor(_ category: String) -> Color {
@@ -94,7 +111,22 @@ struct TaskRowView: View {
             return "\(dakika) dakika önce hatırlatır"
         }
     }
-    
+    func colorForCategory(_ category: String) -> Color {
+        switch category {
+        case "İş":
+            return .blue
+        case "Kişisel":
+            return .orange
+        case "Sağlık":
+            return .green
+        case "Eğitim":
+            return .purple
+        case "Alışveriş":
+            return .pink
+        default:
+            return .gray
+        }
+    }
 }
 
 

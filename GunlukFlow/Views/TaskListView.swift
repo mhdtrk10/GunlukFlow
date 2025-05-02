@@ -79,9 +79,6 @@ struct TaskListView: View {
     
     var body: some View {
         
-       
-
-        
         NavigationView {
             ZStack {
                 Color.blue.opacity(0.15)
@@ -95,9 +92,14 @@ struct TaskListView: View {
                             Button(action: {
                                 ShowStats.toggle()
                             }) {
-                                Label("Haftalık İstatistik",systemImage: "char.bar.xaxis")
+                                Text("Haftalık İstatistik")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 5)
                             }
-                            .buttonStyle(.borderedProminent)
                             .padding(.horizontal)
                         }
                         .frame(maxWidth: .infinity, alignment: .bottomTrailing)

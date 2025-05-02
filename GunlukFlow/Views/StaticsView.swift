@@ -10,7 +10,7 @@ import SwiftUI
 struct StaticsView: View {
     
     @ObservedObject var viewModel: TaskViewModel
-    
+    @Environment(\.dismiss) var dismiss
     
     
     var body: some View {
@@ -37,6 +37,19 @@ struct StaticsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Text("Kapat")
+                        .frame(width: 90,height: 30)
+                        .background(Color.blue)
+                        .foregroundColor(Color.white)
+                        .cornerRadius(10)
+                }
+            }
         }
         .padding()
     }
