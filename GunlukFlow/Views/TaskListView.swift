@@ -9,6 +9,10 @@ import SwiftUI
 
 struct TaskListView: View {
     
+    // Edit sayfası için oluşturduğumuz değişkenler
+    @State private var selectedTask: TaskModel?
+    @State private var isEditing: Bool = false
+    
     // Core Data'dan context'i alıyoruz.
     @Environment(\.managedObjectContext) var context
     //viewModel oluşturuldu.
@@ -239,6 +243,10 @@ struct TaskListView: View {
                             ForEach(filteredTasks) { task in
                                 TaskRowView(task: task, viewModel: viewModel)
                                     .listRowBackground(Color.blue.opacity(0.1))
+                                    .onTapGesture {
+                                        self.selectedTask = task
+                                        self.isEditing = true
+                                    }
                                    
                             }
                             .onDelete { IndexSet in
@@ -262,6 +270,11 @@ struct TaskListView: View {
                     .sheet(isPresented: $ShowStats) {
                         StaticsView(viewModel: viewModel)
                     }
+                    .sheet(isPresented: $isEditing, content: {
+                        if let taskToEdit = selectedTask {
+                            EditTaskView(viewModel: viewModel, task: taskToEdit)
+                        }
+                    })
                     .sheet(isPresented: $ShowSounds) {
                         SoundPickerView()
                     }

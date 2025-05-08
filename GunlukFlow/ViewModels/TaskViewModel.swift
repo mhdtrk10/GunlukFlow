@@ -33,7 +33,7 @@ class TaskViewModel: ObservableObject {
             
             self.tasks = result.map { entity in
                 TaskModel(
-                    id: entity.objectID,
+                    id: entity.taskID ?? UUID(),
                     title: entity.title ?? "",
                     isCompleted: entity.isCompleted,
                     date: entity.date ?? Date(),
@@ -50,10 +50,19 @@ class TaskViewModel: ObservableObject {
     
     func toggleFavorite(_ task: TaskModel) {
         
-        if let entity = try? context.existingObject(with: task.id) as? TaskEntity {
-            entity.isFavorite.toggle()
-            saveChanges()
-            fetchTasks()
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "taskID == %@", task.id as CVarArg)
+        
+        do {
+            
+            if let entity = try context.fetch(fetchRequest).first {
+                entity.isFavorite.toggle()
+                saveChanges()
+                fetchTasks()
+            }
+            
+        } catch {
+            print("Favori durumu değiştirilirken hata oluştu: \(error.localizedDescription)")
         }
         
     }
@@ -69,6 +78,7 @@ class TaskViewModel: ObservableObject {
         newTask.date = date
         newTask.category = category
         newTask.reminderOffset = reminderOffset
+        newTask.taskID = UUID()
         
         saveChanges()
         fetchTasks()
@@ -76,18 +86,34 @@ class TaskViewModel: ObservableObject {
     // Görevi tamamlandı(başlamadı olarak işaretler
     
     func toggleTask(_ task: TaskModel) {
-        if let entity = try? context.existingObject(with: task.id) as? TaskEntity {
-            entity.isCompleted.toggle()
-            saveChanges()
-            fetchTasks()
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "taskID == %@", task.id as CVarArg)
+        
+        do {
+            if let entity = try context.fetch(fetchRequest).first {
+                entity.isCompleted.toggle()
+                
+                saveChanges()
+                fetchTasks()
+            }
+        } catch {
+            print("Görev onaylanırken hata oluştu: \(error.localizedDescription)")
         }
     }
     // görevi siler
     func deleteTask(_ task: TaskModel) {
-        if let entity = try? context.existingObject(with: task.id) as? TaskEntity {
-            context.delete(entity)
-            saveChanges()
-            fetchTasks()
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "taskID == %@", task.id as CVarArg)
+        
+        do {
+            if let entityToDelete = try context.fetch(fetchRequest).first {
+                context.delete(entityToDelete)
+                
+                saveChanges()
+                fetchTasks()
+            }
+        } catch {
+            print("Silme işleminde hata gerçekleşti: \(error.localizedDescription)")
         }
     }
     //Core Data'ya değişiklikleri kaydeder.
@@ -125,4 +151,32 @@ class TaskViewModel: ObservableObject {
         }
         return data
     }
+    
+    // güncelleme fonksiyonu
+    func updateTask(_ task: TaskModel, title: String, date: Date, category: String, reminderOffSet: TimeInterval) {
+        
+        let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
+        
+        do {
+            
+            if let entity = try context.fetch(fetchRequest).first {
+                entity.category = category
+                entity.title = title
+                entity.date = date
+                entity.reminderOffset = reminderOffSet
+                saveChanges()
+                
+                NotificationManager.scheduleNotification(title: "Görev zamanı", body: title, date: date, reminderOffSet: reminderOffSet)
+            }
+            
+            
+        } catch {
+            print("güncelleme esnasında hata oluştu: \(error.localizedDescription)")
+        }
+        
+        
+    }
+    
+    
 }

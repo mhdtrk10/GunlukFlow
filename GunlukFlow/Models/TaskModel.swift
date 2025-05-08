@@ -11,7 +11,7 @@ import CoreData
 // görevi temsil eden model
 
 struct TaskModel: Identifiable {
-    var id: NSManagedObjectID // Core Datadaki nesnenin kimliği
+    var id: UUID // Core Datadaki nesnenin kimliği
     var title: String // Görev başlığı
     var isCompleted: Bool // tamamlandı mı?
     var date: Date // tarih
