@@ -34,7 +34,7 @@ struct TaskListView: View {
     // varsayılan görev saati
     @State private var selectedReminderOffSet: TimeInterval = 0
     
-    let reminderOptions: [(label: String, offset: TimeInterval) ] = [
+    private let reminderOptions: [(label: String, offset: TimeInterval) ] = [
         ("Görev saatinde", 0),
         ("5 dakika önce", -300),
         ("15 dakika önce ", -900),
@@ -91,174 +91,14 @@ struct TaskListView: View {
                 ScrollView {
                     VStack {
                         //Görev ekleme alanı
+                        addTaskSection
                         
-                        HStack {
-                            Button(action: {
-                                ShowStats.toggle()
-                            }) {
-                                Text("Haftalık İstatistik")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 5)
-                            }
-                            .padding(.horizontal)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .bottomTrailing)
-                        VStack {
-                            
-                            
-                            TextField("Yeni görev..", text: $newTaskTitle)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(width: 330)
-                                .padding()
-                                
-                            
-                            HStack {
-                                
-                                HStack {
-                                    Text("Kategori:")
-                                        .frame(width: 70,alignment: .leading)
-                                        
-                                    
-                                    
-                                    
-                                    Picker("",selection: $selectedCategory) {
-                                        ForEach(categories, id: \.self) { category in
-                                            Text(category)
-                                        }
-                                    }
-                                    .pickerStyle(MenuPickerStyle()) // açılır menü
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(10)
-                                    
-                                    Spacer()
-                                }
-                                .frame(width: 200, height: 50)
-                                
-                                HStack {
-                                    Button(action: {
-                                        ShowSounds.toggle()
-                                    }) {
-                                        Text("Bildirim Sesi")
-                                            .frame(width: 120,height: 35)
-                                            .background(Color.blue)
-                                            .foregroundColor(Color.white)
-                                            .cornerRadius(10)
-                                            
-                                    }
-                                }
-                                .frame(width: 110, alignment: .bottomTrailing)
-                                
-                            }
-                            //.background(Color.blue.opacity(0.25))
-                            .frame(width: 350)
-                            
-                            HStack {
-                                HStack {
-                                    DatePicker("Tarih:",selection: $newTaskDate,displayedComponents: [.date,.hourAndMinute])
-                                        .frame(maxWidth:.infinity,alignment: .leading)
-                                    
-                                }
-                                .frame(width:250)
-                                
-                                Spacer()
-                            }
-                            .padding()
-                            .frame(width: 350)
-                            
-                            
-                            HStack {
-                                Text("Hatırlatma Zamanı :")
-                                
-                                Picker("",selection: $selectedReminderOffSet) {
-                                    ForEach(reminderOptions, id: \.offset) { option in
-                                        Text(option.label).tag(option.offset)
-                                    }
-                                }
-                                .pickerStyle(MenuPickerStyle())
-                                
-                            }
-                            .frame(width: 350)
-                            
-                            
-                            
-                            Button(action: {
-                                if !newTaskTitle.isEmpty {
-                                    viewModel.addTask(title: newTaskTitle, date: newTaskDate, category: selectedCategory, reminderOffset: selectedReminderOffSet)
-                                    
-                                    
-                                    // bildirimi zamanlama
-                                    
-                                    NotificationManager.scheduleNotification(
-                                        title: "Görevin Zamanı Geldi!",
-                                        body: newTaskTitle,
-                                        date: newTaskDate,
-                                        reminderOffSet: selectedReminderOffSet
-                                    )
-                                    // formu sıfırlama
-                                    newTaskTitle = ""
-                                    
-                                    // alerti tetikleme
-                                    showSuccessAlert = true
-                                }
-                            }) {
-                                Text("Ekle")
-                                    .frame(width: 130,height: 35)
-                                    .background(Color.blue)
-                                    .foregroundColor(Color.white)
-                                    .cornerRadius(10)
-                                    
-                            }
-                            
-                        }
-                        .frame(width: 350, height: 330)
-                        .cornerRadius(10)
-                        .background(Color.blue.opacity(0.1))
-                        .padding(10)
                         
                         //görevleri listele
                         MotivationBannerView()
                         
-                        
-                        
-                        
-                        HStack {
-                            Text("Kategoriye göre filtrele:")
-                                .frame(width: 180)
-                                
-                            Picker("Kategori", selection: $selectedFilterCategory) {
-                                ForEach(filteredCategories, id: \.self) { category in
-                                    Text(category)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .pickerStyle(MenuPickerStyle())
-
-                        }
-                        .frame(width: 350)
-                        List {
-                            ForEach(filteredTasks) { task in
-                                TaskRowView(task: task, viewModel: viewModel)
-                                    .listRowBackground(Color.blue.opacity(0.1))
-                                    .onTapGesture {
-                                        self.selectedTask = task
-                                        self.isEditing = true
-                                    }
-                                   
-                            }
-                            .onDelete { IndexSet in
-                                IndexSet.forEach { index in
-                                    let task = filteredTasks[index]
-                                    viewModel.deleteTask(task)
-                                }
-                            }
-                        }
-                        .frame(width: 400,height: 300)
-                        .scrollContentBackground(.hidden)
-                        .cornerRadius(10)
+                        categoryFilterSection
+                        taskListSection
                         
                         //reklamı gösterdiğimiz yer
                         BannerAdView(adUnitID: "ca-app-pub-3940256099942544/2934735716")
@@ -289,7 +129,197 @@ struct TaskListView: View {
             }
         }
     }
+    private var addTaskSection: some View {
+        VStack {
+            
+            weekOfIstatistic
+            
+            TextField("Yeni görev..", text: $newTaskTitle)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 330)
+                .padding()
+                
+            AllCategoryStack
+            
+            datePicker
+     
+            // Remind Picker
+            ReminPicker
 
+            Button(action: {
+                AddTask()
+            }) {
+                Text("Ekle")
+                    .frame(width: 130,height: 35)
+                    .background(Color.blue)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(10)
+                    
+            }
+            
+        }
+        .frame(width: 350, height: 360)
+        .cornerRadius(10)
+        .background(Color.blue.opacity(0.1))
+        .padding(10)
+    }
+    private var AllCategoryStack: some View {
+        HStack {
+            categoryPicker
+            
+            
+            HStack {
+                Button(action: {
+                    ShowSounds.toggle()
+                }) {
+                    Text("Bildirim Sesi")
+                        .frame(width: 120,height: 35)
+                        .background(Color.blue)
+                        .foregroundColor(Color.white)
+                        .cornerRadius(10)
+                        
+                }
+            }
+            .frame(width: 110, alignment: .bottomTrailing)
+            
+        }
+        //.background(Color.blue.opacity(0.25))
+        .frame(width: 350)
+    }
+    private var weekOfIstatistic: some View {
+        HStack {
+            Button(action: {
+                ShowStats.toggle()
+            }) {
+                Text("Haftalık İstatistik")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .shadow(radius: 5)
+            }
+            .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+    }
+    private var taskListSection: some View {
+        List {
+            ForEach(filteredTasks) { task in
+                TaskRowView(task: task, viewModel: viewModel)
+                    .listRowBackground(Color.blue.opacity(0.1))
+                    .onTapGesture {
+                        self.selectedTask = task
+                        self.isEditing = true
+                    }
+                   
+            }
+            .onDelete { IndexSet in
+                IndexSet.forEach { index in
+                    let task = filteredTasks[index]
+                    viewModel.deleteTask(task)
+                }
+            }
+        }
+        .frame(width: 400,height: 300)
+        .scrollContentBackground(.hidden)
+        .cornerRadius(10)
+    }
+    private var categoryFilterSection: some View {
+        HStack {
+            Text("Kategoriye göre filtrele:")
+                .frame(width: 180)
+                
+            Picker("Kategori", selection: $selectedFilterCategory) {
+                ForEach(filteredCategories, id: \.self) { category in
+                    Text(category)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .pickerStyle(MenuPickerStyle())
+
+        }
+        .frame(width: 350)
+    }
+    private var categoryPicker: some View {
+        HStack {
+            Text("Kategori:")
+                .frame(width: 70,alignment: .leading)
+                
+            
+            
+            
+            Picker("",selection: $selectedCategory) {
+                ForEach(categories, id: \.self) { category in
+                    Text(category)
+                }
+            }
+            .pickerStyle(MenuPickerStyle()) // açılır menü
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
+            
+            Spacer()
+        }
+        .frame(width: 200, height: 50)
+    }
+    private var datePicker: some View {
+        HStack {
+            HStack {
+                DatePicker("Tarih:",selection: $newTaskDate,displayedComponents: [.date,.hourAndMinute])
+                    .frame(maxWidth:.infinity,alignment: .leading)
+                
+            }
+            .frame(width:250)
+            
+            Spacer()
+        }
+        .padding()
+        .frame(width: 350)
+    }
+    private var ReminPicker: some View {
+        HStack {
+            Text("Hatırlatma Zamanı :")
+            
+            Picker("",selection: $selectedReminderOffSet) {
+                ForEach(reminderOptions, id: \.offset) { option in
+                    Text(option.label).tag(option.offset)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            
+        }
+        .frame(width: 350)
+    }
+    private func AddTask() {
+        guard !newTaskTitle.isEmpty else { return }
+        
+        let taskID = UUID()
+        
+        viewModel.addTask(title: newTaskTitle, date: newTaskDate, category: selectedCategory, reminderOffset: selectedReminderOffSet)
+        
+        
+        // bildirimi zamanlama
+        
+        NotificationManager.scheduleNotification(
+            title: "Görevin Zamanı Geldi!",
+            body: newTaskTitle,
+            date: newTaskDate,
+            reminderOffSet: selectedReminderOffSet,
+            identifier: "late_\(taskID.uuidString)"
+        )
+        NotificationManager.scheduleNotification(
+            title: "Görevi Kaçırdın!",
+            body: "\(newTaskTitle) görevin hala yapılmadı. Acele et!",
+            date: newTaskDate.addingTimeInterval(60),
+            reminderOffSet: 0,
+            identifier: "late_\(taskID.uuidString)"
+        )
+        // formu sıfırlama
+        newTaskTitle = ""
+        
+        // alerti tetikleme
+        showSuccessAlert = true
+    }
 }
 
 #Preview {

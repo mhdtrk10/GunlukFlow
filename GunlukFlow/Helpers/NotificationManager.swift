@@ -12,7 +12,7 @@ import UserNotifications
 struct NotificationManager {
     // belirtilen tarihte seçilen ses ile bildirim zamanlar
     
-    static func scheduleNotification(title: String, body: String, date: Date, reminderOffSet: TimeInterval) {
+    static func scheduleNotification(title: String, body: String, date: Date, reminderOffSet: TimeInterval, identifier: String) {
         
         let content = UNMutableNotificationContent()
         content.title = title
@@ -46,6 +46,10 @@ struct NotificationManager {
             }
         }
         
+    }
+    static func cancelNotification(identifier: String) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+        print("iptal edildi: \(identifier)")
     }
     
     

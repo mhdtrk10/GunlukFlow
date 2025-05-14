@@ -156,7 +156,7 @@ class TaskViewModel: ObservableObject {
     func updateTask(_ task: TaskModel, title: String, date: Date, category: String, reminderOffSet: TimeInterval) {
         
         let fetchRequest: NSFetchRequest<TaskEntity> = TaskEntity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "id == %@", task.id as CVarArg)
+            fetchRequest.predicate = NSPredicate(format: "taskID == %@", task.id as CVarArg)
         
         do {
             
@@ -166,8 +166,11 @@ class TaskViewModel: ObservableObject {
                 entity.date = date
                 entity.reminderOffset = reminderOffSet
                 saveChanges()
+                fetchTasks()
                 
-                NotificationManager.scheduleNotification(title: "Görev zamanı", body: title, date: date, reminderOffSet: reminderOffSet)
+                let identifier = "late_\(task.id.uuidString)"
+                
+                NotificationManager.scheduleNotification(title: "Görev zamanı", body: title, date: date, reminderOffSet: reminderOffSet, identifier: identifier)
             }
             
             

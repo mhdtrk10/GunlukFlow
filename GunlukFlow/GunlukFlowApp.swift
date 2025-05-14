@@ -11,6 +11,7 @@ import SwiftUI
 struct GunlukFlowApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let persistenceController = PersistenceController.shared
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         requestNotificationPermission()
@@ -20,6 +21,11 @@ struct GunlukFlowApp: App {
         WindowGroup {
             TaskListView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .onChange(of: scenePhase) { oldPhase, newPhase in
+                    if newPhase == .active {
+                        checkForMissedTasks()
+                    }
+                }
         }
     }
     
@@ -31,5 +37,22 @@ struct GunlukFlowApp: App {
                 print("Bildirim izni reddedildi: \(error?.localizedDescription ?? "Bilinmeyen hata")")
             }
         }
+    }
+    
+    func checkForMissedTasks() {
+        let viewModel = TaskViewModel(context: persistenceController.container.viewContext)
+        let now = Date()
+        
+        for task in viewModel.tasks {
+            let timeDifference = now.timeIntervalSince(task.date)
+            
+            if  timeDifference >= 0 && timeDifference <= 60 {
+                cancelLateReminder(for: task)
+            }
+        }
+    }
+    func cancelLateReminder(for task: TaskModel) {
+        let identifier = "late_(\(task.id.uuidString))"
+        NotificationManager.cancelNotification(identifier: identifier)
     }
 }
