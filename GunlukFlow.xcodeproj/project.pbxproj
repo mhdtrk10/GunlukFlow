@@ -10,14 +10,33 @@
 		D0358E982DB6A36E00252932 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = D0358E972DB6A36E00252932 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D028469A2E09BFFB00FAC53D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D01C25C12DAEAA9D00141AE3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D01C25C82DAEAA9E00141AE3;
+			remoteInfo = GunlukFlow;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		D01C25C92DAEAA9E00141AE3 /* GunlukFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GunlukFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D02846962E09BFFB00FAC53D /* GunlukFlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GunlukFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D02846A02E09C00C00FAC53D /* Exceptions for "GunlukFlow" folder in "GunlukFlowTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GünlükFlowViewModelTests.swift",
+			);
+			target = D02846952E09BFFB00FAC53D /* GunlukFlowTests */;
+		};
 		D0358EC52DB6A78A00252932 /* Exceptions for "GunlukFlow" folder in "GunlukFlow" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"GünlükFlowViewModelTests.swift",
 				Info.plist,
 			);
 			target = D01C25C82DAEAA9E00141AE3 /* GunlukFlow */;
@@ -29,8 +48,14 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				D0358EC52DB6A78A00252932 /* Exceptions for "GunlukFlow" folder in "GunlukFlow" target */,
+				D02846A02E09C00C00FAC53D /* Exceptions for "GunlukFlow" folder in "GunlukFlowTests" target */,
 			);
 			path = GunlukFlow;
+			sourceTree = "<group>";
+		};
+		D02846972E09BFFB00FAC53D /* GunlukFlowTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GunlukFlowTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -44,6 +69,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D02846932E09BFFB00FAC53D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -51,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				D01C25CB2DAEAA9E00141AE3 /* GunlukFlow */,
+				D02846972E09BFFB00FAC53D /* GunlukFlowTests */,
 				D01C25CA2DAEAA9E00141AE3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				D01C25C92DAEAA9E00141AE3 /* GunlukFlow.app */,
+				D02846962E09BFFB00FAC53D /* GunlukFlowTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,6 +123,29 @@
 			productReference = D01C25C92DAEAA9E00141AE3 /* GunlukFlow.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D02846952E09BFFB00FAC53D /* GunlukFlowTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D028469C2E09BFFB00FAC53D /* Build configuration list for PBXNativeTarget "GunlukFlowTests" */;
+			buildPhases = (
+				D02846922E09BFFB00FAC53D /* Sources */,
+				D02846932E09BFFB00FAC53D /* Frameworks */,
+				D02846942E09BFFB00FAC53D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D028469B2E09BFFB00FAC53D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D02846972E09BFFB00FAC53D /* GunlukFlowTests */,
+			);
+			name = GunlukFlowTests;
+			packageProductDependencies = (
+			);
+			productName = GunlukFlowTests;
+			productReference = D02846962E09BFFB00FAC53D /* GunlukFlowTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,11 +153,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					D01C25C82DAEAA9E00141AE3 = {
 						CreatedOnToolsVersion = 16.3;
+					};
+					D02846952E09BFFB00FAC53D = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = D01C25C82DAEAA9E00141AE3;
 					};
 				};
 			};
@@ -122,12 +183,20 @@
 			projectRoot = "";
 			targets = (
 				D01C25C82DAEAA9E00141AE3 /* GunlukFlow */,
+				D02846952E09BFFB00FAC53D /* GunlukFlowTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D01C25C72DAEAA9E00141AE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D02846942E09BFFB00FAC53D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -144,7 +213,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D02846922E09BFFB00FAC53D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D028469B2E09BFFB00FAC53D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D01C25C82DAEAA9E00141AE3 /* GunlukFlow */;
+			targetProxy = D028469A2E09BFFB00FAC53D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D01C25D72DAEAA9F00141AE3 /* Debug */ = {
@@ -326,6 +410,44 @@
 			};
 			name = Release;
 		};
+		D028469D2E09BFFB00FAC53D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PZK8VVYPU3;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mehdioturak.GunlukFlowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GunlukFlow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GunlukFlow";
+			};
+			name = Debug;
+		};
+		D028469E2E09BFFB00FAC53D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PZK8VVYPU3;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mehdioturak.GunlukFlowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GunlukFlow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GunlukFlow";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -343,6 +465,15 @@
 			buildConfigurations = (
 				D01C25DA2DAEAA9F00141AE3 /* Debug */,
 				D01C25DB2DAEAA9F00141AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D028469C2E09BFFB00FAC53D /* Build configuration list for PBXNativeTarget "GunlukFlowTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D028469D2E09BFFB00FAC53D /* Debug */,
+				D028469E2E09BFFB00FAC53D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

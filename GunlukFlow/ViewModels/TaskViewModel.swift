@@ -11,7 +11,7 @@ import CoreData
 class TaskViewModel: ObservableObject {
     
     //CoreData context(veri işlemleri için)
-    let context: NSManagedObjectContext
+    private(set) var context: NSManagedObjectContext
     
     // view'de kullanmak için görev listesi
     @Published var tasks: [TaskModel] = []
@@ -21,6 +21,12 @@ class TaskViewModel: ObservableObject {
         self.context = context
         fetchTasks()
     }
+    
+    convenience init() {
+        let container = PersistenceController.shared.container
+        self.init(context: container.viewContext)
+    }
+    
     // COre Data'dan görevleri çekip 'TaskModel' dizisine dönüştürür
     func fetchTasks() {
         let request = NSFetchRequest<TaskEntity>(entityName: "TaskEntity")
